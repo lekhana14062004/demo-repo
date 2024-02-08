@@ -1,80 +1,137 @@
 #include<stdio.h>
-typedef struct polynomial
+#include<stdlib.h>
+#include<string.h>
+struct node
 {
-    int cf;
-    int px;
-}
-P;
-void accept(P p1[10],int n)
+    char name[100];
+    char usn[20];
+    char branch[10];
+    int sem;
+    long int phno;
+    struct node* link;
+};
+typedef struct node* NODE;
+NODE getnode()
 {
-    printf("enter the coefficiet and exponent");
-    for(int i=0;i<n;i++)
+    NODE x;
+    x=(NODE)malloc(sizeof(struct node));
+    if(x==NULL)
     {
-        scanf("%d %d",&p1[i].cf,&p1[i].px);
+        printf("memory not available");
+        return NULL;
     }
+    return x;
 }
-void display(P p1[20],int n)
+NODE insertfront(NODE first)
 {
-    for(int i=0;i<n;i++)
+    NODE temp;
+    temp=getnode();
+    printf("enter details");
+    scanf("%s %s %s %d %ld",(temp->name),(temp->usn),(temp->branch),&(temp->sem),&(temp->phno));
+    temp->link=first;
+    return temp;
+}
+NODE insertrear(NODE first)
+{
+    NODE temp,cur,prev;
+    temp=getnode();
+    printf("enter details");
+    scanf("%s %s %s %d %ld",(temp->name),(temp->usn),(temp->branch),&(temp->sem),&(temp->phno));
+    temp->link=NULL;
+    if(first==NULL)
     {
-        if(p1[i].cf>0)
-        {
-            printf("+%dx^%d",p1[i].cf,p1[i].px);
-        }
-        else
-        {
-            printf("%dx^%d",p1[i].cf,p1[i].px);
-        }
+        return temp;
     }
-    printf("\n");
-}
-int multiply(P p1[20],int n1,P p2[20],int n2,P res[20])
-{
-    int k=0;
-    for(int i=0;i<n1;i++)
+    cur=first;
+    prev=NULL;
+    while(cur!=NULL)
     {
-        for(int j=0;j<n2;j++)
-        {
-            res[k].cf=p1[i].cf*p2[j].cf;
-            res[k].px=p1[i].px+p2[j].px;
-            k++;
-        }
+        prev=cur;
+        cur=cur->link;
     }
-    return k;
+    prev->link=temp;
+    return first;
 }
-int addpoly(P res[20],int k,P res2[20])
+NODE deletefront(NODE first)
 {
-    int index=0;
-    for(int i=0;i<k;i++)
+    NODE next;
+    if(first==NULL)
     {
-    
-        res2[index].cf=0;
-        if(res[i].cf!=-999)
-        {
-            for(int j=0;j<k;j++)
-            {
-                if(res[i].px==res[j].px)
-                {
-                    res2[index].cf=res2[index].cf+res[j].cf;
-                    res2[index].px=res[i].px;
-                    res[j].cf=-999;
-                }
-            }
-            index++;
-        }
+        return first;
     }
-    return index;
+    if(first->link==NULL)
+    {
+        free(first);
+        return NULL;
+    }
+    next=first->link;
+    printf("the deleted details are");
+    printf("%s %s %s %d %ld",(first->name),(first->usn),(first->branch),(first->sem),(first->phno));
+    next->link=first;
+    free(first);
+    return next;
 }
-int main()
+NODE deleterear(NODE first)
 {
-    int n1=3,n2=3;
-    int k,index;
-    P p1[20],p2[20],res[20],res2[20];
-    accept(p1,n1);
-    accept(p2,n2);
-    k=multiply(p1,n1,p2,n2,res);
-    index=addpoly(res,k,res2);
-    display(res2,index);
-    return 0;
+    NODE cur,prev;
+     if(first==NULL)
+    {
+        return first;
+    }
+    if(first->link==NULL)
+    {
+        free(first);
+        return NULL;
+    }
+    prev=NULL;
+    cur=first;
+    while(cur->link!=NULL)
+    {
+        prev=cur;
+        cur=cur->link;
+    }
+    printf("deleted elem is");
+      printf("%s %s %s %d %ld",(cur->name),(cur->usn),(cur->branch),(cur->sem),(cur->phno));
+      free(cur);
+      prev->link=NULL;
+      return first;
+}
+void display(NODE first)
+{
+    NODE cur;
+    cur=first;
+    while(cur=NULL)
+    {
+        printf("%s %s %s %d %ld",(cur->name),(cur->usn),(cur->branch),(cur->sem),(cur->phno));
+        cur=cur->link;
+    }
+     
 }
 
+int main()
+{
+    NODE first;
+    first=NULL;
+    int ch;
+    printf("1.for insert front\n2.for insert rear\n2.for delete front\n4 for delete rear\n 5 for disaply");
+    for(;;)
+    {
+        printf("enter choice");
+        scanf("%d",&ch);
+        switch(ch)
+        {
+            case 1:first=insertfront(first);
+            break;
+            case 2:first=insertrear(first);
+            break;
+            case 3:first=deletefront(first);
+            break;
+            case 4:first=deleterear(first);
+            break;
+            case 5:display(first);
+            break;
+            default:exit(0);
+        }
+    }
+}
+  
